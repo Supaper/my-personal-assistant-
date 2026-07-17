@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+dist-ssr/
+*.local
+*.tsbuildinfo
+
+# Environment & secrets (NEVER commit)
+.env
+.env.local
+.env.*.local
+*.serviceaccount.json
+service-account*.json
+google-credentials*.json
+firebase-adminsdk*.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Firebase local
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Card news working directory (generated PNGs are committed under /cardnews by CI only)
+scripts/.tmp/

@@ -1,0 +1,54 @@
+name: daily-brief
+
+# 매일 아침 06:40 KST 실행(버퍼 20분). 실행 지연 가능성이 있어 "07:00 이전 확인"을 SLA로 둔다.
+on:
+  schedule:
+    - cron: '40 6 * * *'
+      timezone: 'Asia/Seoul'
+  workflow_dispatch: {}
+
+# 60일 미활동 시 스케줄 자동 비활성화를 피하려면 keepalive.yml 참고.
+concurrency:
+  group: daily-brief
+  cancel-in-progress: false
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: 일정·경제·교육 브리핑 생성
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GOOGLE_CALENDAR_ID: ${{ vars.GOOGLE_CALENDAR_ID }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+        run: npm run brief:daily
+
+      - name: 통합 브리핑 이메일 발송
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_APP_PASSWORD }}
+          from: 개인 어시스턴트 <${{ secrets.MAIL_USERNAME }}>
+          to: ${{ vars.MAIL_TO }}
+          subject: ☀️ 오늘의 브리핑
+          html_body: file://scripts/.tmp/email.html

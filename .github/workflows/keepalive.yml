@@ -1,0 +1,24 @@
+name: keepalive
+
+# GitHub Actions는 60일간 커밋이 없으면 스케줄을 자동 비활성화한다.
+# 매주 1회 빈 커밋을 남겨 daily-brief/weekly-cardnews 스케줄이 꺼지지 않게 유지한다.
+on:
+  schedule:
+    - cron: '0 5 * * 0'
+      timezone: 'Asia/Seoul'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 빈 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: keepalive (스케줄 유지)"
+          git push

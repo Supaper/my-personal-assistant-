@@ -1,0 +1,66 @@
+name: weekly-cardnews
+
+# 매주 월요일 06:00 KST. 소재 미입력 시 "미입력" 안내 메일만 발송하고 스킵.
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+      timezone: 'Asia/Seoul'
+  workflow_dispatch: {}
+
+concurrency:
+  group: weekly-cardnews
+  cancel-in-progress: false
+
+permissions:
+  contents: write # 생성된 PNG를 저장소에 커밋하기 위함
+
+jobs:
+  cardnews:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Playwright 브라우저 설치
+        run: npx playwright install --with-deps chromium
+
+      - name: 카드뉴스 생성
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+        run: npm run cardnews:weekly
+
+      - name: 생성된 PNG 커밋
+        if: ${{ hashFiles('scripts/.tmp/cardnews-skip') == '' }}
+        run: |
+          if [ -n "$(git status --porcelain cardnews)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add cardnews
+            git commit -m "chore(cardnews): 주간 카드뉴스 이미지 생성"
+            git push
+          else
+            echo "커밋할 변경 없음"
+          fi
+
+      - name: 완료/미입력 알림 이메일
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_APP_PASSWORD }}
+          from: 개인 어시스턴트 <${{ secrets.MAIL_USERNAME }}>
+          to: ${{ vars.MAIL_TO }}
+          subject: 🃏 이번 주 카드뉴스
+          html_body: file://scripts/.tmp/cardnews-email.html
