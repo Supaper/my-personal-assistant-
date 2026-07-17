@@ -9,6 +9,7 @@
  *
  * 실행: npm run cardnews:weekly  (GitHub Actions weekly-cardnews.yml)
  */
+import './lib/bootstrap.ts';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { getDb } from './lib/firestore.ts';

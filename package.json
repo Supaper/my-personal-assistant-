@@ -14,7 +14,8 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint . --ext .ts,.tsx",
     "brief:daily": "tsx scripts/daily-brief.ts",
-    "cardnews:weekly": "tsx scripts/weekly-cardnews.ts"
+    "cardnews:weekly": "tsx scripts/weekly-cardnews.ts",
+    "google:auth": "tsx scripts/google-auth.ts"
   },
   "dependencies": {
     "firebase": "^11.1.0",

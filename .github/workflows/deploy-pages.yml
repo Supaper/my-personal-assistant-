@@ -20,6 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Pages가 아직 비활성 상태여도 워크플로우에서 자동으로 활성화한다(수동 설정 불필요).
+      - name: Pages 설정(자동 활성화)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/setup-node@v4
         with:
           node-version: 20
