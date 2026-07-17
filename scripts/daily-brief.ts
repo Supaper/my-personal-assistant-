@@ -8,6 +8,7 @@
  *
  * 실행: npm run brief:daily  (GitHub Actions daily-brief.yml)
  */
+import './lib/bootstrap.ts';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { getDb } from './lib/firestore.ts';
@@ -113,6 +114,16 @@ function serialize(items: RawArticle[]): string {
 
 async function main() {
   const date = todayKey();
+
+  // 이메일 발송 스텝(if: always())이 파일 부재로 실패하지 않도록,
+  // 본격 처리 전에 폴백 본문을 먼저 남겨둔다. 성공 시 실제 본문으로 덮어쓴다.
+  await mkdir(dirname(EMAIL_OUT), { recursive: true });
+  await writeFile(
+    EMAIL_OUT,
+    `<p>⚠️ ${date} 브리핑 생성 중 오류가 발생했습니다. Actions 로그를 확인하세요.</p>`,
+    'utf8',
+  );
+
   const db = getDb();
   const now = new Date().toISOString();
 

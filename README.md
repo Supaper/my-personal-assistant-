@@ -67,7 +67,11 @@ npm run build        # 타입체크 + 프로덕션 빌드
 npm run typecheck    # 타입체크만
 npm run brief:daily      # 아침 브리핑 스크립트 로컬 실행 (.env 필요)
 npm run cardnews:weekly  # 카드뉴스 생성 스크립트 로컬 실행 (.env 필요)
+npm run google:auth      # Google Calendar refresh token 1회 발급 도우미
 ```
+
+> 자동화 스크립트는 실행 시 프로젝트 루트의 `.env` 를 자동으로 로드합니다(있을 때만).
+> CI(GitHub Actions)에서는 Secrets/Variables가 주입되므로 `.env` 없이 동작합니다.
 
 > Firebase 환경 변수가 없으면 대시보드는 “초기 설정 필요” 안내 화면을 표시합니다.
 
@@ -87,9 +91,15 @@ npm run cardnews:weekly  # 카드뉴스 생성 스크립트 로컬 실행 (.env 
 - 서비스 계정 키(JSON) 발급 → `FIREBASE_SERVICE_ACCOUNT` Secret에 한 줄 문자열로 저장
 
 ### 2. Google Calendar (OAuth2)
-- Google Cloud Console에서 OAuth 클라이언트 생성
-- 최초 1회 동의 → refresh token 발급
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` Secret 등록
+- Google Cloud Console → **API 및 서비스**에서 **Google Calendar API** 사용 설정
+- **OAuth 2.0 클라이언트 ID** 생성 → **승인된 리디렉션 URI**에 `http://localhost:5555` 추가
+- `.env` 에 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` 입력 후 refresh token 발급:
+  ```bash
+  npm run google:auth
+  # 출력된 URL을 브라우저에서 열고 캘린더 접근 허용 → refresh token 확인
+  ```
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` 을 Secret으로 등록
+- (선택) 특정 캘린더를 쓰려면 `GOOGLE_CALENDAR_ID` Variable 지정(기본 `primary`)
 
 ### 3. 네이버 뉴스 검색 API
 - 네이버 개발자센터에서 애플리케이션 등록
@@ -133,7 +143,8 @@ npm run cardnews:weekly  # 카드뉴스 생성 스크립트 로컬 실행 (.env 
 ├─ scripts/             GitHub Actions에서 실행되는 자동화 스크립트
 │  ├─ lib/              공통 라이브러리(firestore/claude/calendar/news/email …)
 │  ├─ daily-brief.ts    아침 브리핑
-│  └─ weekly-cardnews.ts 주간 카드뉴스
+│  ├─ weekly-cardnews.ts 주간 카드뉴스
+│  └─ google-auth.ts    Google refresh token 발급 도우미
 ├─ shared/types.ts      프론트엔드·스크립트 공용 데이터 모델
 ├─ .github/workflows/   daily-brief / weekly-cardnews / keepalive / deploy-pages
 ├─ cardnews/            생성된 카드뉴스 PNG (CI가 커밋)

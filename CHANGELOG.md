@@ -4,8 +4,16 @@
 
 ## [Unreleased]
 
+### Added — Phase 1: 캘린더 MVP 실연동 (진행 중)
+- `scripts/google-auth.ts`: Google Calendar refresh token 1회 발급 도우미
+  (로컬 loopback OAuth, `npm run google:auth`) — 캘린더 연동의 최대 진입장벽 해소
+- `scripts/lib/bootstrap.ts`: 로컬 실행 시 `.env` 자동 로드(Node 내장, 무의존성).
+  `daily-brief`·`weekly-cardnews`·`google-auth` 진입점에 적용
+- `daily-brief`: 이메일 발송 스텝이 파일 부재로 실패하지 않도록 폴백 본문 선기록
+- 문서: README에 Google OAuth 발급 절차(리디렉션 URI, 도우미 사용법) 보강
+
 ### 예정 (PRD 로드맵)
-- Phase 1: Google Calendar OAuth 실연동 + 일정 이메일 파이프라인 검증
+- Phase 1(잔여): 실제 Firebase/Calendar 자격증명 주입 후 파이프라인 end-to-end 검증
 - Phase 2: 네이버 API·Claude 요약 파이프라인 실연동 및 튜닝
 - Phase 3: 카드뉴스 다운로드(zip) 및 미리보기 UI, 완료 알림 이메일에 미리보기 첨부
 - Phase 4: 키워드 커스터마이징 UI, 실행 이력/에러 모니터링, 이메일 발송 실패 재시도
