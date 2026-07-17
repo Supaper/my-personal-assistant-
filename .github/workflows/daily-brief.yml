@@ -15,6 +15,9 @@ concurrency:
 jobs:
   brief:
     runs-on: ubuntu-latest
+    # 메일 시크릿이 아직 없으면 이메일 스텝을 건너뛰기 위한 플래그.
+    env:
+      HAS_MAIL: ${{ secrets.MAIL_USERNAME != '' && secrets.MAIL_APP_PASSWORD != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -30,6 +33,7 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+          GOOGLE_CALENDAR_ICS_URL: ${{ secrets.GOOGLE_CALENDAR_ICS_URL }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
@@ -40,7 +44,7 @@ jobs:
         run: npm run brief:daily
 
       - name: 통합 브리핑 이메일 발송
-        if: always()
+        if: ${{ always() && env.HAS_MAIL == 'true' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com

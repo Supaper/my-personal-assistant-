@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added — Phase 1: 캘린더 소스 간소화 + 배포
+- **캘린더 비공개 iCal(ICS) 주소 지원** — OAuth 없이 `GOOGLE_CALENDAR_ICS_URL` 하나로 일정 수집
+  (`scripts/lib/calendar.ts`: `fetchTodayEventsFromIcs`, 반복 일정 RRULE 전개·EXDATE 처리).
+  ICS 주소가 있으면 우선 사용하고 없으면 기존 OAuth 방식으로 폴백(`fetchTodayEventsAuto`)
+- `daily-brief.yml`: 메일 시크릿 미설정 시 이메일 스텝을 자동으로 건너뛰도록 처리(`HAS_MAIL`)
+- Firebase 웹 공개 설정 커밋 + 이메일 기반 Firestore 규칙(이전 커밋)
+- GitHub Pages 배포 완료(`deploy-pages.yml` + Pages 자동 활성화)
+
 ### Added — Phase 1: 캘린더 MVP 실연동 (진행 중)
 - `scripts/google-auth.ts`: Google Calendar refresh token 1회 발급 도우미
   (로컬 loopback OAuth, `npm run google:auth`) — 캘린더 연동의 최대 진입장벽 해소
