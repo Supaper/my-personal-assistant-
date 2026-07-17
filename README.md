@@ -90,16 +90,20 @@ npm run google:auth      # Google Calendar refresh token 1회 발급 도우미
   ```
 - 서비스 계정 키(JSON) 발급 → `FIREBASE_SERVICE_ACCOUNT` Secret에 한 줄 문자열로 저장
 
-### 2. Google Calendar (OAuth2)
-- Google Cloud Console → **API 및 서비스**에서 **Google Calendar API** 사용 설정
-- **OAuth 2.0 클라이언트 ID** 생성 → **승인된 리디렉션 URI**에 `http://localhost:5555` 추가
-- `.env` 에 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` 입력 후 refresh token 발급:
-  ```bash
-  npm run google:auth
-  # 출력된 URL을 브라우저에서 열고 캘린더 접근 허용 → refresh token 확인
-  ```
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` 을 Secret으로 등록
-- (선택) 특정 캘린더를 쓰려면 `GOOGLE_CALENDAR_ID` Variable 지정(기본 `primary`)
+### 2. Google Calendar
+
+**방법 A — 비공개 iCal 주소 (권장, OAuth 불필요)**
+- 구글 캘린더 웹 → 오른쪽 설정(⚙️) → 해당 캘린더 선택 → **캘린더 통합**
+- **비공개 주소(iCal 형식)** URL 복사
+- `GOOGLE_CALENDAR_ICS_URL` Secret으로 등록 → 끝
+
+**방법 B — OAuth2 (대안)**
+- Google Cloud Console → **Google Calendar API** 사용 설정
+- **OAuth 2.0 클라이언트 ID** 생성 → 승인된 리디렉션 URI에 `http://localhost:5555` 추가
+- `.env` 에 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` 입력 후 `npm run google:auth` 로 refresh token 발급
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` Secret 등록
+
+> 두 방법 중 하나만 설정하면 됩니다. 둘 다 있으면 iCal 주소가 우선합니다.
 
 ### 3. 네이버 뉴스 검색 API
 - 네이버 개발자센터에서 애플리케이션 등록
@@ -126,7 +130,8 @@ npm run google:auth      # Google Calendar refresh token 1회 발급 도우미
 |---|---|---|
 | Secret | `FIREBASE_SERVICE_ACCOUNT` | Admin SDK Firestore 쓰기 |
 | Secret | `ANTHROPIC_API_KEY` | Claude API |
-| Secret | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REFRESH_TOKEN` | 캘린더 OAuth |
+| Secret | `GOOGLE_CALENDAR_ICS_URL` | 캘린더 비공개 iCal 주소 (방법 A, 권장) |
+| Secret | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REFRESH_TOKEN` | 캘린더 OAuth (방법 B) |
 | Secret | `NAVER_CLIENT_ID` / `NAVER_CLIENT_SECRET` | 네이버 뉴스 API |
 | Secret | `MAIL_USERNAME` / `MAIL_APP_PASSWORD` | Gmail 발송 |
 | Variable | `CLAUDE_MODEL` | 사용할 Claude 모델 |

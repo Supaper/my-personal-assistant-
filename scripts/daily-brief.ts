@@ -12,7 +12,7 @@ import './lib/bootstrap.ts';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { getDb } from './lib/firestore.ts';
-import { fetchTodayEvents } from './lib/calendar.ts';
+import { fetchTodayEventsAuto } from './lib/calendar.ts';
 import { searchNaverNews, fetchRss, type RawArticle } from './lib/news.ts';
 import { askJson } from './lib/claude.ts';
 import { buildBriefEmail } from './lib/email.ts';
@@ -131,7 +131,7 @@ async function main() {
   let events: CalendarEvent[] = [];
   let eventsFailed = false;
   try {
-    events = await fetchTodayEvents();
+    events = await fetchTodayEventsAuto();
     await db.doc(`dailyBrief/${date}`).set({ events, generatedAt: now, stale: false });
   } catch (e) {
     eventsFailed = true;
