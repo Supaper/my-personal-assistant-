@@ -17,4 +17,4 @@ export const defaultFirebaseConfig = {
 } as const;
 
 /** 로그인을 허용할 단일 사용자 이메일(기본값). VITE_ALLOWED_EMAIL로 덮어쓸 수 있다. */
-export const defaultAllowedEmail = 'soojhann@seoulav.co.kr';
+export const defaultAllowedEmail = 'enthusiasm9347@gmail.com';

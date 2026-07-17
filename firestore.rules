@@ -13,7 +13,7 @@ service cloud.firestore {
     function isOwner() {
       return request.auth != null
         && request.auth.token.email_verified == true
-        && request.auth.token.email == 'soojhann@seoulav.co.kr';
+        && request.auth.token.email == 'enthusiasm9347@gmail.com';
     }
 
     match /{document=**} {
