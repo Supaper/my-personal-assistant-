@@ -1,17 +1,20 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import { defaultFirebaseConfig, defaultAllowedEmail } from './firebaseConfig';
 
+// 환경 변수(VITE_FIREBASE_*)가 있으면 우선 사용하고, 없으면 커밋된 공개 기본값을 쓴다.
+const env = import.meta.env;
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: env.VITE_FIREBASE_API_KEY || defaultFirebaseConfig.apiKey,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || defaultFirebaseConfig.authDomain,
+  projectId: env.VITE_FIREBASE_PROJECT_ID || defaultFirebaseConfig.projectId,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || defaultFirebaseConfig.storageBucket,
+  messagingSenderId:
+    env.VITE_FIREBASE_MESSAGING_SENDER_ID || defaultFirebaseConfig.messagingSenderId,
+  appId: env.VITE_FIREBASE_APP_ID || defaultFirebaseConfig.appId,
 };
 
-// 환경 변수가 아직 설정되지 않았어도(로컬 최초 실행 등) 앱이 크래시하지 않도록 방어.
 export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
 
 let app: FirebaseApp | undefined;
@@ -28,5 +31,6 @@ export const auth = authInstance;
 export const db = dbInstance;
 export const googleProvider = new GoogleAuthProvider();
 
-/** 로그인을 허용할 단일 사용자 이메일 (없으면 모든 로그인 허용 — 개발 편의) */
-export const allowedEmail: string | undefined = import.meta.env.VITE_ALLOWED_EMAIL;
+/** 로그인을 허용할 단일 사용자 이메일. VITE_ALLOWED_EMAIL 로 덮어쓸 수 있다. */
+export const allowedEmail: string | undefined =
+  import.meta.env.VITE_ALLOWED_EMAIL || defaultAllowedEmail;

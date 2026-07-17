@@ -71,14 +71,14 @@ npm run cardnews:weekly    # 카드뉴스 스크립트 (.env, playwright 필요)
 
 - [ ] 새 코드에 API 키/토큰/서비스 계정을 하드코딩하지 않았는가
 - [ ] 개인 일정 원문 등 민감 데이터를 저장소에 커밋하지 않았는가 (Firestore에만)
-- [ ] `firestore.rules`가 소유자 UID만 허용하는가 (`REPLACE_WITH_OWNER_UID` 교체 필요)
+- [ ] `firestore.rules`가 소유자 이메일만 허용하는가 (`OWNER_EMAIL` = `src/firebaseConfig.ts`의 `defaultAllowedEmail`과 일치)
 - [ ] 새 시크릿을 `.env.example` / 워크플로우 / README에 반영했는가
 - [ ] 뉴스 요약 프롬프트가 원문 복제 금지·재구성 규칙을 유지하는가
 
 ## 연동(사용자 액션 필요) 항목
 
 아래는 코드만으로 끝나지 않고 **사용자가 외부 콘솔에서 발급/등록**해야 동작한다. 작업 중 이 부분이 필요해지면 사용자에게 알린다.
-- Firebase 프로젝트 + 서비스 계정, Firestore 규칙의 소유자 UID
+- Firebase 프로젝트 + 서비스 계정 (Firestore 규칙은 소유자 이메일 기반이라 UID 조회 불필요)
 - Google Calendar OAuth (client id/secret, refresh token)
 - 네이버 뉴스 API 키
 - Anthropic API 키
