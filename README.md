@@ -1,6 +1,6 @@
 # 개인 업무 자동화 어시스턴트
 
-매일 아침 업무 시작 전에 확인할 정보(**일정 · 경제 뉴스 · 교육 뉴스**)를 자동 수집·요약해 하나의 대시보드에서 보여주고, **주 1회 신앙 카드뉴스(8장)** 초안을 자동 제작하는 개인용 자동화 시스템입니다.
+매일 아침 업무 시작 전에 확인할 정보(**일정 · 경제 뉴스 · 교육 뉴스**)를 자동 수집·요약해 하나의 대시보드에서 보여주는 개인용 자동화 시스템입니다.
 
 상세 요구사항은 [`docs/PRD.md`](docs/PRD.md)를 참고하세요.
 
@@ -13,8 +13,7 @@
 | 1 | 매일 07:00 일정 브리핑 | Google Calendar 오늘 일정을 시간순으로 정리 |
 | 2 | 경제 동향 요약 | 미국/국내 경제 뉴스를 Claude가 쉬운 말로 요약 |
 | 3 | 교육 이슈 큐레이션 | 유아교육·특수교육·교권 키워드 뉴스 요약 |
-| 4 | 주간 카드뉴스 제작 | 입력한 소재로 8장 카드뉴스 PNG 자동 생성 |
-| — | 이메일 알림 | 매일 통합 브리핑 + 주간 카드뉴스 완료 알림을 Gmail로 발송 |
+| — | 이메일 알림 | 매일 통합 브리핑을 Gmail로 발송 |
 
 ---
 
@@ -24,7 +23,6 @@
 GitHub Actions (cron)  ──►  외부 API (Google Calendar / 네이버 뉴스 / Claude)
         │                        │
         ├── Firestore(Spark) 에 결과 저장
-        ├── 카드뉴스 PNG 를 저장소(Git)에 커밋
         └── Gmail SMTP 로 이메일 발송
 
 GitHub Pages (React 대시보드)  ──►  Firebase Auth 로그인 후 Firestore 읽기
@@ -42,9 +40,8 @@ GitHub Pages (React 대시보드)  ──►  Firebase Auth 로그인 후 Firest
 - **호스팅**: GitHub Pages
 - **자동화**: GitHub Actions (scheduled workflow, `timezone: Asia/Seoul`)
 - **DB / 인증**: Firebase Firestore + Authentication (Spark 무료 플랜)
-- **AI**: Anthropic Claude API (요약 / 카드뉴스 생성)
+- **AI**: Anthropic Claude API (뉴스 요약)
 - **뉴스**: 네이버 뉴스 검색 API + RSS
-- **카드뉴스 렌더링**: Playwright(headless Chromium) + HTML/CSS 템플릿
 - **이메일**: Gmail SMTP(App Password) + `dawidd6/action-send-mail`
 
 ---
@@ -66,7 +63,6 @@ npm run dev          # http://localhost:5173
 npm run build        # 타입체크 + 프로덕션 빌드
 npm run typecheck    # 타입체크만
 npm run brief:daily      # 아침 브리핑 스크립트 로컬 실행 (.env 필요)
-npm run cardnews:weekly  # 카드뉴스 생성 스크립트 로컬 실행 (.env 필요)
 npm run google:auth      # Google Calendar refresh token 1회 발급 도우미
 ```
 
@@ -148,11 +144,9 @@ npm run google:auth      # Google Calendar refresh token 1회 발급 도우미
 ├─ scripts/             GitHub Actions에서 실행되는 자동화 스크립트
 │  ├─ lib/              공통 라이브러리(firestore/claude/calendar/news/email …)
 │  ├─ daily-brief.ts    아침 브리핑
-│  ├─ weekly-cardnews.ts 주간 카드뉴스
 │  └─ google-auth.ts    Google refresh token 발급 도우미
 ├─ shared/types.ts      프론트엔드·스크립트 공용 데이터 모델
-├─ .github/workflows/   daily-brief / weekly-cardnews / keepalive / deploy-pages
-├─ cardnews/            생성된 카드뉴스 PNG (CI가 커밋)
+├─ .github/workflows/   daily-brief / keepalive / deploy-pages
 ├─ docs/PRD.md          제품 요구사항 문서
 ├─ firestore.rules      Firestore 보안 규칙
 └─ CLAUDE.md            Claude Code 개발 가이드

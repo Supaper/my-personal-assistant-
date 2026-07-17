@@ -20,6 +20,7 @@ import { optionalEnv } from './lib/env.ts';
 import {
   DEFAULT_ECONOMY_KEYWORDS,
   DEFAULT_EDUCATION_KEYWORDS,
+  fsPaths,
   type CalendarEvent,
   type EconomyNewsItem,
   type EducationCategory,
@@ -132,18 +133,18 @@ async function main() {
   let eventsFailed = false;
   try {
     events = await fetchTodayEventsAuto();
-    await db.doc(`dailyBrief/${date}`).set({ events, generatedAt: now, stale: false });
+    await db.doc(fsPaths.dailyBrief(date)).set({ events, generatedAt: now, stale: false });
   } catch (e) {
     eventsFailed = true;
     console.error('[calendar] 실패, 이전 캐시 유지:', (e as Error).message);
-    await db.doc(`dailyBrief/${date}`).set({ stale: true, generatedAt: now }, { merge: true });
+    await db.doc(fsPaths.dailyBrief(date)).set({ stale: true, generatedAt: now }, { merge: true });
   }
 
   // 2) 경제 / 3) 교육 (실패해도 브리핑은 계속)
   const economy = await safe(collectEconomy, '경제');
   const education = await safe(collectEducation, '교육');
-  await db.doc(`newsDigest/economy/${date}`).set({ items: economy, generatedAt: now });
-  await db.doc(`newsDigest/education/${date}`).set({ items: education, generatedAt: now });
+  await db.doc(fsPaths.economyDigest(date)).set({ items: economy, generatedAt: now });
+  await db.doc(fsPaths.educationDigest(date)).set({ items: education, generatedAt: now });
 
   // 5) 이메일 본문
   const html = buildBriefEmail({

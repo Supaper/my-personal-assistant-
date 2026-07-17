@@ -49,25 +49,6 @@ export interface EducationDigest {
   stale?: boolean;
 }
 
-/** Firestore: cardNewsSubmission/{week} — week 형식: yyyy-Www (예: 2026-W29) */
-export interface CardNewsSubmission {
-  topicText: string;
-  submittedAt: string;
-}
-
-export interface CardNewsSlide {
-  index: number; // 1..8
-  imagePath: string; // 저장소 상대 경로 (예: cardnews/2026-W29/1.png)
-  text: string;
-}
-
-/** Firestore: cardNewsOutput/{week} */
-export interface CardNewsOutput {
-  slides: CardNewsSlide[];
-  status: 'generated' | 'downloaded';
-  generatedAt: string;
-}
-
 /** Firestore: config/educationKeywords, config/economyKeywords */
 export interface KeywordConfig {
   keywords: string[];
@@ -75,3 +56,16 @@ export interface KeywordConfig {
 
 export const DEFAULT_EDUCATION_KEYWORDS: string[] = ['유아교육', '특수교육', '교권'];
 export const DEFAULT_ECONOMY_KEYWORDS: string[] = ['코스피', '환율', '기준금리', '한국은행'];
+
+/**
+ * Firestore 문서 경로 빌더 — 프론트엔드/스크립트가 동일한 경로를 쓰도록 한곳에서 정의.
+ * Firestore 문서 경로는 세그먼트 수가 짝수여야 하므로 뉴스 요약은 하위 컬렉션(items)을 둔다.
+ * (예: newsDigest/economy/items/{yyyy-mm-dd} → 4세그먼트 문서)
+ */
+export const fsPaths = {
+  dailyBrief: (date: string) => `dailyBrief/${date}`,
+  economyDigest: (date: string) => `newsDigest/economy/items/${date}`,
+  educationDigest: (date: string) => `newsDigest/education/items/${date}`,
+  economyKeywords: 'config/economyKeywords',
+  educationKeywords: 'config/educationKeywords',
+} as const;

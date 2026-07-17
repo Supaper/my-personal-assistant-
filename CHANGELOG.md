@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Removed
+- **카드뉴스 기능 전체 제거**(사용자 요청). 스크립트(`weekly-cardnews.ts`,
+  카드뉴스 템플릿/스키마), 워크플로우(`weekly-cardnews.yml`), 대시보드 입력 카드,
+  관련 타입/경로, `playwright`·`jszip` 의존성 삭제. PRD 4.4는 "범위 제외"로 표기
+
+### Fixed
+- Firestore 뉴스 경로 버그 수정: `newsDigest/economy/{date}`(3세그먼트=컬렉션)로
+  문서 쓰기가 실패하던 문제를 하위 컬렉션 경로(`newsDigest/economy/items/{date}`)로 교정.
+  프론트/스크립트 공용 경로 헬퍼(`fsPaths`) 도입으로 읽기·쓰기 경로 불일치 방지
+
 ### Added — Phase 1: 캘린더 소스 간소화 + 배포
 - **캘린더 비공개 iCal(ICS) 주소 지원** — OAuth 없이 `GOOGLE_CALENDAR_ICS_URL` 하나로 일정 수집
   (`scripts/lib/calendar.ts`: `fetchTodayEventsFromIcs`, 반복 일정 RRULE 전개·EXDATE 처리).
