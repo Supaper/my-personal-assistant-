@@ -47,5 +47,5 @@ pnpm-debug.log*
 firebase-debug.log
 firestore-debug.log
 
-# Card news working directory (generated PNGs are committed under /cardnews by CI only)
+# 스크립트 임시 작업 디렉터리(이메일 본문 등)
 scripts/.tmp/

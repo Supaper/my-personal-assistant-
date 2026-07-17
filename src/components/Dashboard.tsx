@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AuthState } from '../useAuth';
 import type { DailyBrief, EconomyDigest, EducationDigest } from '../../shared/types';
-import {
-  getDailyBrief,
-  getEconomyDigest,
-  getEducationDigest,
-  submitCardNewsTopic,
-  todayKey,
-  weekKey,
-} from '../data';
+import { getDailyBrief, getEconomyDigest, getEducationDigest, todayKey } from '../data';
 
 export function Dashboard({ authState }: { authState: AuthState }) {
   const [brief, setBrief] = useState<DailyBrief | null>(null);
@@ -49,7 +42,6 @@ export function Dashboard({ authState }: { authState: AuthState }) {
         <ScheduleCard brief={brief} loaded={loaded} />
         <EconomyCard digest={economy} loaded={loaded} />
         <EducationCard digest={education} loaded={loaded} />
-        <CardNewsCard />
       </main>
     </div>
   );
@@ -122,43 +114,6 @@ function EducationCard({ digest, loaded }: { digest: EducationDigest | null; loa
           </li>
         ))}
       </ul>
-    </section>
-  );
-}
-
-function CardNewsCard() {
-  const [topic, setTopic] = useState('');
-  const [status, setStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle');
-
-  async function handleSubmit() {
-    setStatus('saving');
-    try {
-      await submitCardNewsTopic(topic.trim());
-      setStatus('done');
-    } catch {
-      setStatus('error');
-    }
-  }
-
-  return (
-    <section className="card">
-      <h2>🃏 카드뉴스 소재 입력</h2>
-      <p className="muted">이번 주({weekKey()}) 카드뉴스로 다룰 주제/소재를 입력하세요.</p>
-      <textarea
-        rows={4}
-        value={topic}
-        onChange={(e) => setTopic(e.target.value)}
-        placeholder="예: 바쁜 일상 속에서 쉼의 의미"
-      />
-      <button
-        className="btn-primary"
-        disabled={!topic.trim() || status === 'saving'}
-        onClick={handleSubmit}
-      >
-        {status === 'saving' ? '저장 중…' : '소재 저장'}
-      </button>
-      {status === 'done' && <span className="badge-ok">저장되었습니다.</span>}
-      {status === 'error' && <span className="badge-warn">저장에 실패했습니다.</span>}
     </section>
   );
 }

@@ -16,7 +16,7 @@ export function LoginScreen({ authState }: { authState: AuthState }) {
   return (
     <main className="center login">
       <h1>개인 업무 어시스턴트</h1>
-      <p className="muted">일정 · 경제 · 교육 뉴스 브리핑과 주간 카드뉴스</p>
+      <p className="muted">일정 · 경제 · 교육 뉴스 브리핑</p>
       {authState.forbidden && (
         <p className="error">허용되지 않은 계정입니다. 등록된 계정으로 로그인하세요.</p>
       )}
